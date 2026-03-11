@@ -13,10 +13,12 @@ import com.cda.todolist_backend_java.repository.UserRepository;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtService jwtService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
     }
 
     public UserResponseDTO registerUser(User user) {
@@ -50,7 +52,8 @@ public class UserService {
             throw new InvalidCredentialsException("Email ou mot de passe invalide");
         }
 
-        return new LoginResponseDTO("Login successful");
+        String token = jwtService.generateToken(user.getEmail());
+        return new LoginResponseDTO(token);
     }
 
 
